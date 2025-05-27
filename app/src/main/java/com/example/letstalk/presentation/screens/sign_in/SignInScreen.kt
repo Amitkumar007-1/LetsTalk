@@ -13,11 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,9 +34,11 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.letstalk.R
 import com.example.letstalk.presentation.screens.sign_in.viewmodel.SignInViewModel
+import com.example.letstalk.utils.AuthUiState
 
 //@Preview(showSystemUi = true)
 @Composable
@@ -42,6 +46,7 @@ fun SignInScreen(navController: NavHostController?=null) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val signInViewModel:SignInViewModel = hiltViewModel()
+    val authUiState = signInViewModel.authUiState.collectAsState(AuthUiState.Nothing)
 
     Scaffold (modifier = Modifier.fillMaxSize()){ paddingValues ->
         Column (modifier = Modifier
@@ -79,13 +84,14 @@ fun SignInScreen(navController: NavHostController?=null) {
             Spacer(modifier = Modifier.height(5.dp))
 
             Button(onClick = {
-
+                signInViewModel.signInUser(email,password)
             },
                 modifier = Modifier
                 .fillMaxWidth(0.75f),
                 enabled = email.isNotEmpty() && password.isNotEmpty()
                 ) {
-                Text(text="Sign In")
+                if(authUiState.value==AuthUiState.Loading) CircularProgressIndicator()
+               else Text(text="Sign In")
             }
             TextButton(onClick = {
                 navController?.navigate("signup")

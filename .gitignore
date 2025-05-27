@@ -26,3 +26,5 @@ local.properties
 /.idea/.gitignore
 /.idea/deploymentTargetSelector.xml
 /.idea/compiler.xml
+/.idea/vcs.xml
+/.idea/inspectionProfiles/Project_Default.xml

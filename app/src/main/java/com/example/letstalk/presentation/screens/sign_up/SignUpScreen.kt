@@ -57,7 +57,7 @@ fun SignUpScreen(navController: NavHostController) {
     LaunchedEffect(signUpUiState.value) {
         when (val state=signUpUiState.value) {
             is AuthUiState.Success -> {
-                navController.navigate("login") {
+                navController.navigate("home") {
                     popUpTo("signin") { inclusive = true }
                 }
             }

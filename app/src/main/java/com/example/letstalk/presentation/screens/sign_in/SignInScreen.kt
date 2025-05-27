@@ -51,7 +51,7 @@ fun SignInScreen(navController: NavHostController?=null) {
     LaunchedEffect(authUiState.value) {
         when( val state=authUiState.value){
             is AuthUiState.Success->{
-                navController?.navigate("login"){
+                navController?.navigate("home"){
                     popUpTo("signin"){inclusive=true}
                 }
             }
@@ -104,7 +104,7 @@ fun SignInScreen(navController: NavHostController?=null) {
                 enabled = email.isNotEmpty() && password.isNotEmpty()
                 ) {
                 if(authUiState.value is AuthUiState.Loading){
-                    CircularProgressIndicator(color = Color.Black, modifier = Modifier.size(15.dp))
+                    CircularProgressIndicator(color = Color.Black, modifier = Modifier.size(20.dp), strokeWidth = 1.5.dp)
                 }else{
                     Text("Sign In")
                 }

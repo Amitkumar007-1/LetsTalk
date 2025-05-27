@@ -3,16 +3,14 @@ package com.example.letstalk.data.repository
 import android.util.Log
 import com.example.letstalk.domain.service.SignUpService
 import com.example.letstalk.utils.AuthUiState
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.auth.userProfileChangeRequest
-import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 
-class SignUpRepositoryImpl @Inject constructor() : SignUpService {
+class SignUpRepositoryImpl @Inject constructor(private val firebaseAuth:FirebaseAuth
+,private val firestore:FirebaseFirestore) : SignUpService {
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun signUp(
         name: String,
@@ -23,51 +21,42 @@ class SignUpRepositoryImpl @Inject constructor() : SignUpService {
     ): AuthUiState {
         return suspendCancellableCoroutine { cont ->
 
-            FirebaseAuth.getInstance()
+            firebaseAuth
                 .createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
 
                     if (!cont.isActive) return@addOnCompleteListener
                     if (task.isSuccessful) {
-
-                        task.result.user?.apply {
-                            updateProfile(
-                                UserProfileChangeRequest
-                                    .Builder()
-                                    .setDisplayName(name)
-                                    .build()
-                            ).addOnSuccessListener {
-                                if (cont.isActive) {
-                                    println("success")
+                       val userId= firebaseAuth.currentUser!!.uid
+                        firestore.collection("Users")
+                            .document(userId)
+                            .set(setUserDetail(name,email,status,imageUrl,userId))
+                            .addOnSuccessListener {
+                                if(cont.isActive){
                                     cont.resume(AuthUiState.Success) {
                                         Log.d("SignUpAuth", "Coroutine get cancelled")
                                     }
                                 }
-                            }.addOnFailureListener {
-                                if (cont.isActive) {
-                                    println("fail")
-                                    cont.resume(AuthUiState.Error("Something went wrong user not created")) {}
-                                }
-                            }
-                        } ?: run{
-
-                            if(cont.isActive){
-                                println("runnnn")
+                            }.addOnFailureListener{
+                                if(!cont.isActive) return@addOnFailureListener
                                 cont.resume(AuthUiState.Error("Something went wrong user not created")) {}
                             }
-                        }
-
 
                     } else {
                         if(!cont.isActive) return@addOnCompleteListener
-                        println("elsee")
                         cont.resume(AuthUiState.Error(task.exception?.localizedMessage)) {}
                     }
                 }.addOnFailureListener { err ->
                     if(!cont.isActive) return@addOnFailureListener
-                    println("failleeee")
                     cont.resume(AuthUiState.Error(err.localizedMessage)) {}
                 }
         }
+    }
+    private fun setUserDetail(name:String,email:String,status:String,imageUrl:String,uid:String):HashMap<String,Any>{
+        return hashMapOf("userid" to uid
+            ,"username" to name
+            ,"email" to email
+            ,"status" to status
+            ,"imageUrl" to imageUrl)
     }
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,11 +13,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,25 +33,35 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.letstalk.R
 import com.example.letstalk.presentation.screens.sign_in.viewmodel.SignInViewModel
 import com.example.letstalk.utils.AuthUiState
 
-//@Preview(showSystemUi = true)
 @Composable
 fun SignInScreen(navController: NavHostController?=null) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val signInViewModel:SignInViewModel = hiltViewModel()
+    val snackBarState = remember { SnackbarHostState() }
     val authUiState = signInViewModel.authUiState.collectAsState(AuthUiState.Nothing)
 
-    Scaffold (modifier = Modifier.fillMaxSize()){ paddingValues ->
+    LaunchedEffect(authUiState.value) {
+        when( val state=authUiState.value){
+            is AuthUiState.Success->{
+                navController?.navigate("login"){
+                    popUpTo("signin"){inclusive=true}
+                }
+            }
+            is AuthUiState.Error->{
+                snackBarState.showSnackbar(state.error!!)
+            }
+            else->Unit
+        }
+    }
+    Scaffold (modifier = Modifier.fillMaxSize(), snackbarHost = { SnackbarHost(snackBarState) }){ paddingValues ->
         Column (modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues),
@@ -65,8 +78,8 @@ fun SignInScreen(navController: NavHostController?=null) {
                 onValueChange = {
                     email=it
                 },
+                textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface ),
                 modifier = Modifier.fillMaxWidth(0.75f),
-                textStyle = TextStyle(color = Color.Black ) ,
                 shape = RoundedCornerShape(5.dp),
                 label = { Text(text = "Email")})
 
@@ -75,7 +88,7 @@ fun SignInScreen(navController: NavHostController?=null) {
             OutlinedTextField(value=password,
                 modifier = Modifier.fillMaxWidth(0.75f),
                 onValueChange = {password=it},
-                textStyle = TextStyle(color = Color.Black ),
+                textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface ),
                 shape = RoundedCornerShape(5.dp),
                 visualTransformation = PasswordVisualTransformation(),
                 label = { Text(text = "Password")}
@@ -84,14 +97,17 @@ fun SignInScreen(navController: NavHostController?=null) {
             Spacer(modifier = Modifier.height(5.dp))
 
             Button(onClick = {
-                signInViewModel.signInUser(email,password)
+                signInViewModel.signInUser(email.trim(),password.trim())
             },
                 modifier = Modifier
                 .fillMaxWidth(0.75f),
                 enabled = email.isNotEmpty() && password.isNotEmpty()
                 ) {
-                if(authUiState.value==AuthUiState.Loading) CircularProgressIndicator()
-               else Text(text="Sign In")
+                if(authUiState.value is AuthUiState.Loading){
+                    CircularProgressIndicator(color = Color.Black, modifier = Modifier.size(15.dp))
+                }else{
+                    Text("Sign In")
+                }
             }
             TextButton(onClick = {
                 navController?.navigate("signup")

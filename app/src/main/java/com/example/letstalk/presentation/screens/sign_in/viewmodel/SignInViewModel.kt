@@ -19,6 +19,7 @@ class SignInViewModel @Inject constructor(application: Application,private val s
 
          fun signInUser(email:String,password :String){
            viewModelScope.launch {
+               _authUiState.emit(AuthUiState.Loading)
                _authUiState.emit( signInService.signIn(email,password))
            }
         }

@@ -186,8 +186,7 @@ fun ChatScreen() {
 fun ChatBubble(message: Message) {
     val isCurrentUser =
     message.senderId.equals(FirebaseAuth.getInstance().currentUser?.uid, ignoreCase = false)
-    val backGroundColor =
-        if (isCurrentUser) senderBubble else receiverBubble
+    val backGroundColor = if (isCurrentUser) senderBubble else receiverBubble
 
         Row(
             modifier = Modifier

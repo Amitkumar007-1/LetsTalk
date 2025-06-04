@@ -13,7 +13,7 @@ data class Message(
     var  dateTime:String=""
 
     fun setDataTime(){
-        dateTime=timeStamp?.let { TimeFormatter.formatServerTimeStamp(it) }?:"No Date"
+        dateTime=timeStamp?.let { TimeFormatter.formatServerTimeStamp(it) }?:""
     }
 
     override fun toString(): String {

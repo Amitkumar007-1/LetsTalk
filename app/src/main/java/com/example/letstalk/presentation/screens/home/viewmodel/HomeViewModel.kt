@@ -31,7 +31,7 @@ class HomeViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
     private val _loadErrorUiState = MutableStateFlow(LoadErrorUiState(loading = true, error = null))
     val loadErrorUiState get() = _loadErrorUiState.asStateFlow()
-    private val _profileState=MutableSharedFlow<User>()
+    private val _profileState=MutableSharedFlow<User>(replay = 1)
 
     private val _signOutState = MutableStateFlow("")
     private val _userListState = homeService.getAllUsers()
@@ -85,6 +85,10 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-    fun setUserStatus(s: String) {
+    fun setUserStatus(status: String) {
+        viewModelScope.launch {
+            homeService.setUserStatus(status)
+
+        }
     }
 }

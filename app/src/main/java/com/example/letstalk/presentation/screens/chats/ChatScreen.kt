@@ -121,14 +121,16 @@ fun ChatScreen() {
                 }
 
                 is Resource.Loading -> {
-                    Text(
-                        text = "Please wait...", color = MaterialTheme.colorScheme.inverseOnSurface,
-                        style = TextStyle(fontWeight = FontWeight.SemiBold),
-                        modifier = Modifier
-                            .size(10.dp)
-                            .weight(1f)
-                            .fillMaxWidth()
-                    )
+                  Box(modifier = Modifier.weight(1f).fillMaxWidth(),
+                      contentAlignment = Alignment.Center
+                  ){
+                      Text(
+                          text = "Please wait...", color = Color.White,
+                          style = TextStyle(fontWeight = FontWeight.SemiBold),
+                          modifier = Modifier,
+                          fontSize = 20.sp
+                      )
+                  }
                 }
 
                 else -> Unit

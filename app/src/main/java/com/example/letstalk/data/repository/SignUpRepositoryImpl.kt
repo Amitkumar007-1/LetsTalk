@@ -1,6 +1,7 @@
 package com.example.letstalk.data.repository
 
 import android.util.Log
+import com.example.letstalk.data.model.ImageData
 import com.example.letstalk.domain.service.SignUpService
 import com.example.letstalk.utils.AuthUiState
 import com.google.firebase.auth.FirebaseAuth
@@ -17,7 +18,7 @@ class SignUpRepositoryImpl @Inject constructor(private val firebaseAuth:Firebase
         email: String,
         password: String,
         status: String,
-        imageUrl: String
+        imageData:ImageData
     ): AuthUiState {
         return suspendCancellableCoroutine { cont ->
 
@@ -30,7 +31,7 @@ class SignUpRepositoryImpl @Inject constructor(private val firebaseAuth:Firebase
                        val userId= firebaseAuth.currentUser!!.uid
                         firestore.collection("Users")
                             .document(userId)
-                            .set(setUserDetail(name,email,status,imageUrl,userId))
+                            .set(setUserDetail(name,email,status,imageData,userId))
                             .addOnSuccessListener {
                                 if(cont.isActive){
                                     cont.resume(AuthUiState.Success) {
@@ -52,11 +53,12 @@ class SignUpRepositoryImpl @Inject constructor(private val firebaseAuth:Firebase
                 }
         }
     }
-    private fun setUserDetail(name:String,email:String,status:String,imageUrl:String,uid:String):HashMap<String,Any>{
+    private fun setUserDetail(name:String,email:String,status:String,imageData:ImageData,uid:String):HashMap<String,Any>{
         return hashMapOf("userid" to uid
             ,"username" to name
             ,"email" to email
             ,"status" to status
-            ,"imageUrl" to imageUrl)
+            ,"imageData" to hashMapOf("imageUrl" to imageData.imageUrl,"publicId" to imageData.publicId)
+        )
     }
 }

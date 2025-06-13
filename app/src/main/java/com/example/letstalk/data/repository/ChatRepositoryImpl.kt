@@ -2,6 +2,7 @@ package com.example.letstalk.data.repository
 
 import android.util.Log
 import com.example.letstalk.data.model.Message
+import com.example.letstalk.data.model.User
 import com.example.letstalk.domain.service.ChatService
 import com.example.letstalk.utils.Resource
 import com.google.firebase.auth.FirebaseAuth
@@ -43,8 +44,10 @@ class ChatRepositoryImpl @Inject constructor(private val firebaseStore:FirebaseF
         }
     }
 
+
     override fun getAllMessages(friendId: String):Flow<Resource<List<Message>>> {
        return callbackFlow {
+           trySend(Resource.Loading)
             val senderId=firebaseAuth.currentUser!!.uid
             val chatRoomId= listOf(friendId,senderId).sorted().joinToString("")
            val listener= firebaseStore.collection("Messages").document(chatRoomId)
@@ -65,6 +68,27 @@ class ChatRepositoryImpl @Inject constructor(private val firebaseStore:FirebaseF
                 listener.remove()
             }
 
+        }
+    }
+
+    override fun getFriendDetail(friendId: String) = callbackFlow {
+        val listener= firebaseStore.collection("Users")
+            .document(friendId)
+            .addSnapshotListener{snap,err->
+                if(snap!=null && snap.exists()){
+                    snap.toObject(User::class.java)?.let {
+                        println("seeeee")
+                        trySend(Resource.Success(it))
+                    }
+
+                }else{
+                    println("errrrr")
+                    trySend(Resource.Error(err?.message))
+                }
+            }
+        awaitClose{
+            println("remoooovvvving")
+            listener.remove()
         }
     }
 

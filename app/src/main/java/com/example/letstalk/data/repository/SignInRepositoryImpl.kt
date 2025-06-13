@@ -5,6 +5,7 @@ import com.example.letstalk.domain.service.SignInService
 import com.example.letstalk.utils.AuthUiState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
@@ -23,7 +24,7 @@ class SignInRepositoryImpl @Inject constructor(
                     if (task.isSuccessful) {
                         firestore.collection("Users")
                             .document(firebaseAuth.currentUser?.uid!!)
-                            .update("status","online")
+                            .set(hashMapOf("status" to "online"), SetOptions.merge())
                             .addOnCompleteListener{task2->
                                 if(task2.isSuccessful){
                                     cont.resume(AuthUiState.Success) {

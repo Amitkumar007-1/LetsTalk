@@ -1,4 +1,4 @@
-package com.example.letstalk.utils
+package com.example.letstalk.common.utils
 
 import com.example.letstalk.data.model.Message
 import com.example.letstalk.data.model.User

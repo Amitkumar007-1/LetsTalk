@@ -2,7 +2,7 @@ package com.example.letstalk.domain.service
 
 import com.example.letstalk.data.model.ImageData
 import com.example.letstalk.data.model.User
-import com.example.letstalk.utils.Resource
+import com.example.letstalk.common.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -23,11 +23,4 @@ interface ProfileService {
 
     fun getUserDetails(userId: String): Flow<Resource<User>>
     suspend fun deleteProfilePicFirebase(): Resource<String>
-
-//    suspend fun updateProfilePicToCloudinary(
-//        file: MultipartBody.Part,
-//        presetRequest: RequestBody,
-//        publicId: RequestBody,
-//        overwriteRequest: RequestBody
-//    ): Flow<Resource<ImageData>>
 }

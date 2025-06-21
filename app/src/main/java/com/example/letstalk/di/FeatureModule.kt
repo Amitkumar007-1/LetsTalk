@@ -8,17 +8,10 @@ import com.example.letstalk.data.repository.ProfileRepositoryImpl
 import com.example.letstalk.domain.service.ChatService
 import com.example.letstalk.domain.service.HomeService
 import com.example.letstalk.domain.service.ProfileService
-import com.example.letstalk.utils.Cloudinary
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)

@@ -1,4 +1,4 @@
-package com.example.letstalk.utils
+package com.example.letstalk.common.utils
 
 object Cloudinary {
     const val BASE_URL = "https://api.cloudinary.com/v1_1/"

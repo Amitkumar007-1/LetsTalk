@@ -2,6 +2,7 @@ package com.example.letstalk.ui.status_bar_theme
 
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
@@ -21,6 +22,8 @@ fun StatusBarTheme(color:Color,darkIcon:Boolean){
             WindowCompat.setDecorFitsSystemWindows(it,false)
             val insetsController=WindowInsetsControllerCompat(it,view)
             insetsController.isAppearanceLightStatusBars=darkIcon
+            it.navigationBarColor=color.toArgb()
+            insetsController.isAppearanceLightNavigationBars=darkIcon
         }
     }
 }

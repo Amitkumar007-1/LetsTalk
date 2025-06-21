@@ -63,8 +63,8 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.letstalk.R
 import com.example.letstalk.data.model.Message
 import com.example.letstalk.presentation.screens.chats.viewmodel.ChatViewModel
-import com.example.letstalk.utils.Resource
-import com.example.letstalk.utils.UserFormatter
+import com.example.letstalk.common.utils.Resource
+import com.example.letstalk.common.utils.UserFormatter
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable

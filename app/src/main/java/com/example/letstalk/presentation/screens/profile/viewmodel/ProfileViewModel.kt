@@ -5,17 +5,17 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.example.letstalk.data.model.ImageData
 import com.example.letstalk.data.model.User
 import com.example.letstalk.domain.service.ProfileService
-import com.example.letstalk.utils.Cloudinary
-import com.example.letstalk.utils.LoadErrorUiState
-import com.example.letstalk.utils.ProfileUiDataHolder
-import com.example.letstalk.utils.Resource
+import com.example.letstalk.common.utils.Cloudinary
+import com.example.letstalk.common.utils.LoadErrorUiState
+import com.example.letstalk.common.utils.ProfileUiDataHolder
+import com.example.letstalk.common.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -46,13 +46,10 @@ class ProfileViewModel @Inject constructor(
     AndroidViewModel(application) {
     private val userId by lazy { savedStateHandle.get<String>("userId") }
 
-    private val _loadErrorUiState = MutableStateFlow(LoadErrorUiState(loading = true, error = null))
+    private val _loadErrorUiState = MutableStateFlow(LoadErrorUiState())
     val loadErrorUiState get() = _loadErrorUiState.asStateFlow()
 
-    private val _profileCrudState = MutableStateFlow("")
-
-    lateinit var imageData: ImageData
-
+    private val _profileCrudState =MutableSharedFlow<String>()
 
     private val _profileState =
         profileService.getUserDetails(userId?.let { userId } ?: throw Exception("User id null"))
@@ -72,7 +69,7 @@ class ProfileViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
-                        _loadErrorUiState.update { it.copy(loading = false, error = null) }
+//                        _loadErrorUiState.update { it.copy(loading = false, error = null) }
                         emit(resource.data)
                     }
                 }
@@ -85,7 +82,8 @@ class ProfileViewModel @Inject constructor(
                 User()
             )
     val profileUiStateHolder = ProfileUiDataHolder(
-        profileState = _profileState
+        profileState = _profileState,
+        profileCrudState = _profileCrudState
     )
 
 
@@ -128,7 +126,10 @@ class ProfileViewModel @Inject constructor(
                         }
                     }
                     when (result) {
-                        is Resource.Success -> _profileCrudState.emit(result.data)
+                        is Resource.Success -> {
+                            _loadErrorUiState.update { it.copy(loading = false, error = null) }
+                            _profileCrudState.emit(result.data)
+                        }
                         is Resource.Error -> {
                             _loadErrorUiState.update {
                                 it.copy(
@@ -149,6 +150,7 @@ class ProfileViewModel @Inject constructor(
     fun updateProfilePic(publicId: String, file: File) {
         viewModelScope.launch {
             deleteProfilePic(publicId)
+                .flowOn(Dispatchers.IO)
                 .transform { resource ->
                     when (resource) {
                         is Resource.Loading -> {
@@ -170,6 +172,7 @@ class ProfileViewModel @Inject constructor(
                 .flatMapConcat {
                     val (presetRequest, filePart) = it
                     profileService.uploadProfileToCloudinary(filePart, presetRequest)
+                        .flowOn(Dispatchers.IO)
                 }
                 .transform { response ->
 

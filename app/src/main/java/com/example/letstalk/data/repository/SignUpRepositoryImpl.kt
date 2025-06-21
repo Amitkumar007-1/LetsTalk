@@ -3,7 +3,7 @@ package com.example.letstalk.data.repository
 import android.util.Log
 import com.example.letstalk.data.model.ImageData
 import com.example.letstalk.domain.service.SignUpService
-import com.example.letstalk.utils.AuthUiState
+import com.example.letstalk.common.utils.AuthUiState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.ExperimentalCoroutinesApi

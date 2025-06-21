@@ -1,8 +1,7 @@
 package com.example.letstalk.di
 
 import com.example.letstalk.data.network.ProfileApiService
-import com.example.letstalk.domain.service.ProfileService
-import com.example.letstalk.utils.Cloudinary
+import com.example.letstalk.common.utils.Cloudinary
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -36,3 +36,7 @@ object StatusBarColor{
     val darkStatusBar= DarkBackground
     val lightStatusBar= LightReceiver
 }
+object NavigationBarColor{
+    val navDark= DarkBackground
+    val lightNav= LightReceiver
+}

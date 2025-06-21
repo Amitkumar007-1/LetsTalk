@@ -1,6 +1,6 @@
 package com.example.letstalk.data.model
 
-import com.example.letstalk.utils.TimeFormatter
+import com.example.letstalk.common.utils.TimeFormatter
 import com.google.firebase.Timestamp
 
 data class Message(
@@ -19,11 +19,4 @@ data class Message(
     override fun toString(): String {
         return "Message(senderId='$senderId', receiverId='$receiverId', message='$message', timeStamp=$timeStamp, dateTime='$dateTime')"
     }
-
-    //    var timeStamp:Timestamp?
-//        get()= _timeStamp !!
-//        set(value){
-//            _timeStamp=value
-//            dateTime=value?.let { TimeFormatter.formatServerTimeStamp(it) }?:""
-//        }
 }

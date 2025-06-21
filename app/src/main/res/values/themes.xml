@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.LetsTalk" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.LetsTalk" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <item name="android:windowBackground">@drawable/splash_light</item>
+
+        <!--        Status Bar Theme Setup-->
+        <item name="android:statusBarColor">@color/light_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!--        Navigation Bar Theme Setup-->
+        <item name="android:navigationBarColor">@color/light_background</item>
+        <item name="android:windowLightNavigationBar">false</item>
+
+    </style>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.letstalk.utils
+package com.example.letstalk.common.utils
 
 data class LoadErrorUiState(
     val loading:Boolean=false,

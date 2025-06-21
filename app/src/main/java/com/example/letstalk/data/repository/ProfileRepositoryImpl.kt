@@ -5,8 +5,8 @@ import com.example.letstalk.data.model.ImageData
 import com.example.letstalk.data.model.User
 import com.example.letstalk.data.network.ProfileApiService
 import com.example.letstalk.domain.service.ProfileService
-import com.example.letstalk.utils.Cloudinary
-import com.example.letstalk.utils.Resource
+import com.example.letstalk.common.utils.Cloudinary
+import com.example.letstalk.common.utils.Resource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -41,7 +41,7 @@ class ProfileRepositoryImpl @Inject constructor(
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun uploadProfilePicToFireBase(imageData: ImageData):Resource<String> {
+    override suspend fun uploadProfilePicToFireBase(imageData: ImageData): Resource<String> {
         val userId=firebaseAuth.currentUser?.uid
         return suspendCancellableCoroutine {cont->
             firebaseStore.collection("Users")
@@ -62,7 +62,7 @@ class ProfileRepositoryImpl @Inject constructor(
         }
     }
     @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun deleteProfilePicFirebase():Resource<String> {
+    override suspend fun deleteProfilePicFirebase(): Resource<String> {
         val userId=firebaseAuth.currentUser?.uid
         return suspendCancellableCoroutine {cont->
             firebaseStore.collection("Users")
@@ -116,16 +116,13 @@ class ProfileRepositoryImpl @Inject constructor(
                 .addSnapshotListener { snap, error ->
                     if (snap != null && snap.exists()) {
                         snap.toObject(User::class.java)?.let {
-                            println("seeeee")
                             trySend(Resource.Success(it))
                         }
                     } else {
-                        println("errrrr")
                         trySend(Resource.Error(error?.message))
                     }
                 }
             awaitClose {
-                println("removing listener")
                 listener.remove()
             }
         }

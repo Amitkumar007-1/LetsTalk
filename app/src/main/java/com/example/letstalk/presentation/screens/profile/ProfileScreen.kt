@@ -43,6 +43,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
@@ -74,28 +75,29 @@ import java.io.File
 
 val LocalUser = compositionLocalOf<User> { error("User not present") }
 
-//@Preview(showBackground = true)
 @Composable
 fun ProfileScreen() {
+    val context = LocalContext.current
     val snackBarState = remember { SnackbarHostState() }
     val profileViewModel = hiltViewModel<ProfileViewModel>()
     val loadErrorUiState = profileViewModel.loadErrorUiState.collectAsState()
+    val profileCrudState = profileViewModel.profileUiStateHolder.profileCrudState.collectAsState("")
     val profileUiState =
         profileViewModel.profileUiStateHolder.profileState.collectAsStateWithLifecycle()
 
-//    LaunchedEffect(loadErrorUiState.value.error) {
-//        val error = loadErrorUiState.value.error
-//        if (error != null)
-//            snackBarState.showSnackbar(error)
-//    }
 
+    LaunchedEffect(profileCrudState.value) {
+        profileCrudState.value.takeIf { it.isNotEmpty() }?.let {
+            Toast.makeText(context, profileCrudState.value, Toast.LENGTH_SHORT).show()
+        }
+    }
     CompositionLocalProvider(LocalUser provides profileUiState.value) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.onSurfaceVariant)
         ) {
-            ConstraintLayout {
+            ConstraintLayout(modifier = Modifier.fillMaxSize()) {
                 val (picRef, nameRef, loadingRef, addUpdatePicRef) = createRefs()
 
                 ProfilePicComponent(modifier = Modifier.constrainAs(picRef) {
@@ -104,7 +106,6 @@ fun ProfileScreen() {
                     end.linkTo(parent.end)
                 })
                 if (loadErrorUiState.value.loading) {
-                    println("loaadingggg")
                     LoadingBar(loadingRef = loadingRef)
                 }
 
@@ -112,11 +113,11 @@ fun ProfileScreen() {
                     top.linkTo(picRef.bottom)
                 })
 
-                if (profileUiState.value.imageData.imageUrl.isEmpty() && !loadErrorUiState.value.loading) {
+                if (profileUiState.value.imageData.imageUrl.isEmpty()) {
                     AddPicComponent(modifier = Modifier.constrainAs(addUpdatePicRef) {
                         top.linkTo(nameRef.bottom)
                     })
-                } else if (profileUiState.value.imageData.imageUrl.isNotEmpty() && !loadErrorUiState.value.loading) {
+                } else if (profileUiState.value.imageData.imageUrl.isNotEmpty()) {
                     UpdateDeletePicComponent(modifier = Modifier.constrainAs(addUpdatePicRef) {
                         top.linkTo(nameRef.bottom)
                     })
@@ -175,14 +176,16 @@ fun UpdateDeletePicComponent(modifier: Modifier) {
     var alertDialog by remember { mutableStateOf(false) }
     val profileViewModel = hiltViewModel<ProfileViewModel>()
     val activityResult = rememberActivityLauncher(context) { file ->
-        profileViewModel.updateProfilePic(user.imageData.publicId,file)
+        profileViewModel.updateProfilePic(user.imageData.publicId, file)
     }
     Column(modifier = modifier, verticalArrangement = Arrangement.Center) {
         Row(verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(70.dp)
-                .clickable { activityResult() }
+                .clickable {
+                    activityResult()
+                }
                 .padding(10.dp)
         ) {
             Spacer(modifier = Modifier.width(20.dp))
@@ -204,7 +207,7 @@ fun UpdateDeletePicComponent(modifier: Modifier) {
                 .fillMaxWidth()
                 .height(70.dp)
                 .clickable {
-                    alertDialog=true
+                    alertDialog = true
                 }
                 .padding(10.dp)
         ) {
@@ -223,10 +226,10 @@ fun UpdateDeletePicComponent(modifier: Modifier) {
             )
         }
 
-        if(alertDialog){
-            AlertDialogBox({alertDialog=false}) {
+        if (alertDialog) {
+            AlertDialogBox({ alertDialog = false }) {
                 profileViewModel.deletePic(user.imageData.publicId)
-                alertDialog=false
+                alertDialog = false
             }
         }
     }
@@ -267,7 +270,7 @@ fun AddPicComponent(modifier: Modifier) {
 
 @Composable
 fun UpdateNameComponent(modifier: Modifier) {
-
+   val user= LocalUser.current
 
     Row(verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -281,7 +284,6 @@ fun UpdateNameComponent(modifier: Modifier) {
         Icon(
             imageVector = Icons.Filled.Person,
             contentDescription = null,
-//            tint = MaterialTheme.colorScheme.onBackground
             tint = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.width(10.dp))
@@ -296,7 +298,7 @@ fun UpdateNameComponent(modifier: Modifier) {
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Amit",
+                text = user.username.replaceFirstChar { it.uppercase() },
                 color = if (isSystemInDarkTheme()) Color.LightGray else Color.DarkGray,
                 fontSize = 12.sp,
                 fontStyle = FontStyle.Normal,
@@ -309,20 +311,22 @@ fun UpdateNameComponent(modifier: Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlertDialogBox( dismiss: () -> Unit, confirm: () -> Unit) {
-    AlertDialog(onDismissRequest = {}, containerColor = MaterialTheme.colorScheme.surface, confirmButton = {
-        TextButton(onClick = {
-            confirm()
-        }) {
-            Text(text = "Yes")
-        }
-    }, dismissButton = {
-        TextButton(onClick = {
-            dismiss()
-        }) {
-            Text(text = "No")
-        }
-    }, title = { Text("Are you sure ?") })
+fun AlertDialogBox(dismiss: () -> Unit, confirm: () -> Unit) {
+    AlertDialog(onDismissRequest = {},
+        containerColor = MaterialTheme.colorScheme.surface,
+        confirmButton = {
+            TextButton(onClick = {
+                confirm()
+            }) {
+                Text(text = "Yes")
+            }
+        }, dismissButton = {
+            TextButton(onClick = {
+                dismiss()
+            }) {
+                Text(text = "No")
+            }
+        }, title = { Text("Are you sure ?") })
 }
 
 @Composable

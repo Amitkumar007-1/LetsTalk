@@ -19,6 +19,7 @@ object ProfileWorkScheduler {
         val syncRequest =
             PeriodicWorkRequestBuilder<ProfileSyncWorker>(2,TimeUnit.HOURS)
                 .setConstraints(workConstraints)
+                .setInitialDelay(1,TimeUnit.MINUTES)
                 .setBackoffCriteria(BackoffPolicy.EXPONENTIAL,30,TimeUnit.SECONDS)
                 .build()
 

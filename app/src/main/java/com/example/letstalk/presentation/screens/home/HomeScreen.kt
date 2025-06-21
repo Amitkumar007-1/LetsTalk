@@ -270,7 +270,6 @@ fun RecentChatItem(recentChat: RecentChats) {
                 Image(
                     painter = rememberAsyncImagePainter(
                         model = recentChat.imageUrl,
-//                        model = "",
                         error = painterResource(id = R.drawable.ic_user_icon),
                         placeholder = painterResource(id = R.drawable.ic_user_icon)
                     ),
@@ -314,7 +313,6 @@ fun RecentChatItem(recentChat: RecentChats) {
                     width = Dimension.fillToConstraints
                 },
                 textAlign = TextAlign.Start,
-//                text = "Heelo hows you",
                 text = recentChat.lastMessage,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

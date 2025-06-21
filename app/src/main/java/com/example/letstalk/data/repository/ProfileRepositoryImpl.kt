@@ -1,6 +1,4 @@
 package com.example.letstalk.data.repository
-
-import android.util.Log
 import com.example.letstalk.data.model.ImageData
 import com.example.letstalk.data.model.User
 import com.example.letstalk.data.network.ProfileApiService
@@ -50,13 +48,9 @@ class ProfileRepositoryImpl @Inject constructor(
                 .addOnCompleteListener{task->
                     if(!cont.isActive) return@addOnCompleteListener
                     if(task.isSuccessful){
-                        cont.resume(Resource.Success("Uploaded Successfully")){
-                            Log.d("Error","Coroutine get cancelled")
-                        }
+                        cont.resume(Resource.Success("Uploaded Successfully")){}
                     }else{
-                        cont.resume(Resource.Error(task.exception?.message?:"Something went wrong")){
-                            Log.d("Error","Coroutine get cancelled")
-                        }
+                        cont.resume(Resource.Error(task.exception?.message?:"Something went wrong")){}
                     }
                 }
         }
@@ -71,13 +65,9 @@ class ProfileRepositoryImpl @Inject constructor(
                 .addOnCompleteListener{task->
                     if(!cont.isActive) return@addOnCompleteListener
                     if(task.isSuccessful){
-                        cont.resume(Resource.Success("Deleted Successfully")){
-                            Log.d("Error","Coroutine get cancelled")
-                        }
+                        cont.resume(Resource.Success("Deleted Successfully")){}
                     }else{
-                        cont.resume(Resource.Error(task.exception?.message?:"Something went wrong")){
-                            Log.d("Error","Coroutine get cancelled")
-                        }
+                        cont.resume(Resource.Error(task.exception?.message?:"Something went wrong")){}
                     }
                 }
         }
@@ -99,12 +89,8 @@ class ProfileRepositoryImpl @Inject constructor(
                signature
            )
 
-           if (result.isSuccessful) {
-               Log.d("Delete", "Successfully")
-               emit(Resource.Success("Done"))
-           } else {
-               Log.d("Delete", "Fail")
-               emit(Resource.Error(result.message()))           }
+           if (result.isSuccessful) { emit(Resource.Success("Done"))
+           } else { emit(Resource.Error(result.message()))           }
        }
     }
 

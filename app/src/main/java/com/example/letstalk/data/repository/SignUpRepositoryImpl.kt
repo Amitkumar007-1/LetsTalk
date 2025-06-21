@@ -1,6 +1,4 @@
 package com.example.letstalk.data.repository
-
-import android.util.Log
 import com.example.letstalk.data.model.ImageData
 import com.example.letstalk.domain.service.SignUpService
 import com.example.letstalk.common.utils.AuthUiState
@@ -34,9 +32,7 @@ class SignUpRepositoryImpl @Inject constructor(private val firebaseAuth:Firebase
                             .set(setUserDetail(name,email,status,imageData,userId))
                             .addOnSuccessListener {
                                 if(cont.isActive){
-                                    cont.resume(AuthUiState.Success) {
-                                        Log.d("SignUpAuth", "Coroutine get cancelled")
-                                    }
+                                    cont.resume(AuthUiState.Success) {}
                                 }
                             }.addOnFailureListener{
                                 if(!cont.isActive) return@addOnFailureListener

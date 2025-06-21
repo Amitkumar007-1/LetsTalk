@@ -1,6 +1,4 @@
 package com.example.letstalk.data.repository
-
-import android.util.Log
 import com.example.letstalk.domain.service.SignInService
 import com.example.letstalk.common.utils.AuthUiState
 import com.google.firebase.auth.FirebaseAuth
@@ -27,13 +25,9 @@ class SignInRepositoryImpl @Inject constructor(
                             .set(hashMapOf("status" to "online"), SetOptions.merge())
                             .addOnCompleteListener{task2->
                                 if(task2.isSuccessful){
-                                    cont.resume(AuthUiState.Success) {
-                                        Log.d("AuthRepo", "Coroutine Get Cancelled")
-                                    }
+                                    cont.resume(AuthUiState.Success) {}
                                 }else{
-                                    cont.resume(AuthUiState.Error("Status not updated")){
-                                        Log.d("AuthRepo", "Coroutine Get Cancelled")
-                                    }
+                                    cont.resume(AuthUiState.Error("Status not updated")){}
                                 }
                             }
                     } else {
@@ -44,16 +38,12 @@ class SignInRepositoryImpl @Inject constructor(
                                 if (msg.contains("auth credential", ignoreCase = true))
                                     "Invalid email or password" else msg
                             )
-                        ) {
-                            Log.d("AuthRepo", "Coroutine Get Cancelled")
-                        }
+                        ) {}
                     }
 
                 }.addOnFailureListener { fail ->
                     if (!cont.isActive) return@addOnFailureListener
-                    cont.resume(AuthUiState.Error(fail.localizedMessage)) {
-                        Log.d("AuthRepo", "Coroutine Get Cancelled")
-                    }
+                    cont.resume(AuthUiState.Error(fail.localizedMessage)) {}
 
                 }
         }

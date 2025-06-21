@@ -1,8 +1,6 @@
 package com.example.letstalk
 
 import android.app.Application
-import android.util.Log
-import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.example.letstalk.common.observer.AppLifeCycleTracker
 import com.example.letstalk.common.service.MyAppEntryPoint
@@ -15,7 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltAndroidApp
 class LetsTalk():Application(),Configuration.Provider {
@@ -46,13 +43,9 @@ class LetsTalk():Application(),Configuration.Provider {
                 firebaseAuth.currentUser?.let {
                     coroutineScope.launch {
                         when (val result = userService.setUserStatus("online")) {
-                            is Resource.Success -> {
-                                Log.d("Status Success", "User status ${result.data}")
-                            }
+                            is Resource.Success -> {}
 
-                            is Resource.Error -> {
-                                Log.d("Status Error", "User status ${result.message}")
-                            }
+                            is Resource.Error -> {}
 
                             else -> Unit
                         }
@@ -63,13 +56,9 @@ class LetsTalk():Application(),Configuration.Provider {
                 firebaseAuth.currentUser?.let {
                     coroutineScope.launch {
                         when (val result = userService.setUserStatus("offline")) {
-                            is Resource.Success -> {
-                                Log.d("Status Success", "User status ${result.data}")
-                            }
+                            is Resource.Success -> {}
 
-                            is Resource.Error -> {
-                                Log.d("Status Error", "User status ${result.message}")
-                            }
+                            is Resource.Error -> {}
 
                             else -> Unit
                         }

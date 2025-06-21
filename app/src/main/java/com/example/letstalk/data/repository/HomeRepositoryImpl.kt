@@ -1,6 +1,4 @@
 package com.example.letstalk.data.repository
-
-import android.util.Log
 import com.example.letstalk.data.model.RecentChats
 import com.example.letstalk.data.model.User
 import com.example.letstalk.db.dao.UserProfileDao
@@ -58,23 +56,17 @@ class HomeRepositoryImpl @Inject constructor(
                     if (!cont.isActive) return@addOnCompleteListener
                     if (task.isSuccessful) {
                         firebaseAuth.signOut()
-                        cont.resume(AuthUiState.Success) {
-                            Log.d("Error", "Coroutine get cancelled")
-                        }
+                        cont.resume(AuthUiState.Success) {}
                     } else {
                         cont.resume(
                             AuthUiState.Error(task.exception?.localizedMessage ?: "Sign out failed try later")
-                        ) {
-                            Log.d("Error", "Coroutine get cancelled")
-                        }
+                        ) {}
                     }
                 }.addOnFailureListener {
                     if (!cont.isActive) return@addOnFailureListener
                     cont.resume(
                         AuthUiState.Error(it.localizedMessage ?: "Sign out failed try later")
-                    ) {
-                        Log.d("Error", "Coroutine get cancelled")
-                    }
+                    ) {}
                 }
         }
     }
@@ -89,13 +81,9 @@ class HomeRepositoryImpl @Inject constructor(
                 .addOnCompleteListener{task->
                    if(!cont.isActive) return@addOnCompleteListener
                     if(task.isSuccessful){
-                        cont.resume(Resource.Success("done")){
-                            Log.d("Error", "Coroutine get cancelled")
-                        }
+                        cont.resume(Resource.Success("done")){}
                     }else{
-                            cont.resume(Resource.Error(task.exception?.localizedMessage?:"Something went wrong")){
-                                Log.d("Error", "Coroutine get cancelled")
-                            }
+                            cont.resume(Resource.Error(task.exception?.localizedMessage?:"Something went wrong")){}
 
                     }
 

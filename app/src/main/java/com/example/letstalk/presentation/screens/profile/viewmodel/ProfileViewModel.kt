@@ -1,7 +1,6 @@
 package com.example.letstalk.presentation.screens.profile.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -122,7 +121,6 @@ class ProfileViewModel @Inject constructor(
                     file.let {
                         if (it.exists()) {
                             it.delete()
-                            Log.d("File", "File deleted successfully")
                         }
                     }
                     when (result) {

@@ -3,7 +3,6 @@ package com.example.letstalk.presentation.screens.home
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.InfiniteRepeatableSpec
@@ -118,13 +117,11 @@ fun setUpSyncSchedule(): () -> Unit {
     return {
         if (!SyncPreference.isInitialized(context)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                Log.d("Permission","DONE")
                 val permissionGrant=ContextCompat.checkSelfPermission(context,Manifest.permission.POST_NOTIFICATIONS)
                 if(permissionGrant!=PackageManager.PERMISSION_GRANTED){
                    permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
             } else {
-                Log.d("Permission","NONE")
                 ProfileWorkScheduler.scheduleProfileWork(context)
                 SyncPreference.markInitialised(context)
             }

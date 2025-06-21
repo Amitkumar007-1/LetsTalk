@@ -1,7 +1,6 @@
 package com.example.letstalk.common.sync
 import android.content.Context
 import android.net.ConnectivityManager
-import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.letstalk.common.service.UserService
@@ -33,7 +32,6 @@ class ProfileSyncWorker
     private suspend fun syncLetsTalkProfiles(): Result {
         when (val resource = userService.fetchUsers()) {
             is Resource.Error -> {
-                Log.d("Worker Error", resource.message ?: "Something went wrong")
                 NotificationHelper.showSyncNotification(applicationContext,"Retrying...")
                return  Result.retry()
             }

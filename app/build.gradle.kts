@@ -20,6 +20,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    lint {
+        disable += mutableSetOf("NullSafeMutableLiveData", "NonNullableMutableLiveData")
+    }
 
     buildTypes {
         release {

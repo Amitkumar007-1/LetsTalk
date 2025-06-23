@@ -28,7 +28,7 @@ It enables user to stay connected to other regardless of location
 >  - **Navigation Component Framework**
 >  - **WorkManger Syncing Profiles In Background**
 >  - **Retrofit (remote server)**
->  - **Retrofit (remote server)**
+>  - **Room Database (Local storage)**
 >  - **Coroutines( reactive async programming )**
 >  - **Flows**
 >  -  **MVVM Architecture**
